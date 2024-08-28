@@ -1,0 +1,72 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+
+import "../styles/global.scss";
+import "../styles/utilities.scss";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <script is:inline src="/src/scripts/fontLoader.js" defer></script>
+    <script is:inline src="/src/scripts/deselectText.js" defer></script>
+    <script is:inline src="/src/scripts/positionScroll.js" defer></script>
+
+    <style>
+      #main-content.hidden {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main-content" class="hidden">
+      <slot />
+    </div>
+    <script>
+      // Añade esta línea al principio de tu archivo TypeScript
+      /// <reference lib="dom" />
+
+      // Función para cargar el script después de que se cargue el DOM
+      function loadScript(src: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = src;
+          script.onload = () => resolve();
+          script.onerror = (error) => reject(error);
+          document.body.appendChild(script);
+        });
+      }
+
+      window.addEventListener("load", async () => {
+        try {
+          await loadScript("/src/scripts/bgSectionChange.js");
+
+          const btn1 = document.querySelector(".btn-1") as HTMLElement | null;
+          const btn2 = document.querySelector(".btn-2") as HTMLElement | null;
+          const btn3 = document.querySelector(".btn-3") as HTMLElement | null;
+          const parentSection = document.querySelector(
+            ".section-bg-3"
+          ) as HTMLElement | null;
+
+          console.log("btn1:", btn1);
+          console.log("btn2:", btn2);
+          console.log("btn3:", btn3);
+          console.log("parentSection:", parentSection);
+        } catch (error) {
+          console.error("Error loading script:", error);
+        }
+      });
+    </script>
+  </body>
+</html>
